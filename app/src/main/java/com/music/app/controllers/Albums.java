@@ -2,6 +2,7 @@ package com.music.app.controllers;
 
 import com.music.app.models.Album;
 import com.music.app.repos.AlbumRepository;
+import com.music.app.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +40,11 @@ public class Albums {
     }
 
     @PostMapping("/")
-   public ResponseEntity<Album> createAlbum(@RequestBody Album album) {
+   public ResponseEntity<?> createAlbum(@RequestBody Album album, @CookieValue("token") String token) {
+        if (!new JwtUtil().verifyToken(token))
+            return ResponseEntity
+                    .status(401)
+                    .body("Invalid token");
         Album newAlbum = new Album(album.getAlbumName(), album.getImage(), album.getLinks());
         albumRepository.save(newAlbum);
         return ResponseEntity
@@ -48,7 +53,11 @@ public class Albums {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> editAlbum(@PathVariable(value = "id") String albumId, @RequestBody Album editedAlbum) {
+    public ResponseEntity<?> editAlbum(@PathVariable(value = "id") String albumId, @RequestBody Album editedAlbum, @CookieValue("token") String token) {
+        if (!new JwtUtil().verifyToken(token))
+            return ResponseEntity
+                    .status(401)
+                    .body("Invalid token");
         Optional<Album> album = albumRepository.findById(albumId);
         if (album.isEmpty())
             return ResponseEntity
@@ -64,7 +73,11 @@ public class Albums {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteAlbum(@PathVariable(value = "id") String albumId) {
+    public ResponseEntity<?> deleteAlbum(@PathVariable(value = "id") String albumId, @CookieValue("token") String token) {
+        if (!new JwtUtil().verifyToken(token))
+            return ResponseEntity
+                    .status(401)
+                    .body("Invalid token");
         Optional<Album> album = albumRepository.findById(albumId);
         if (album.isEmpty())
             return ResponseEntity

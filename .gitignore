@@ -5,6 +5,7 @@ app/.mvn/wrapper/maven-wrapper.jar
 !app/**/src/test/**/target/
 app/src/main/java/com/music/app/SecretConstants.java
 app/src/main/resources/application.properties
+app/.env
 
 ### STS ###
 app/.apt_generated

@@ -1,21 +1,15 @@
 package com.music.app.controllers;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.music.app.SecretConstants;
 import com.music.app.models.Admin;
 import com.music.app.pojos.CreateAdminPojo;
 import com.music.app.repos.AdminRepository;
+import com.music.app.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.Map;
 
 @RestController
@@ -41,14 +35,9 @@ public class Authentication {
                     .status(401)
                     .body("There is no user with the given password.");
         try {
-            Algorithm algorithm = Algorithm.HMAC256(SecretConstants.SECRET);
-            String token = JWT.create()
-                    .withExpiresAt(new Date().toInstant().plusMillis(1000 * 60 /* one hour */))
-                    .withIssuer("music")
-                    .sign(algorithm);
             return ResponseEntity
                 .status(201)
-                .body(Map.of("token", token));
+                .body(Map.of("token", new JwtUtil().generateToken()));
         } catch (JWTCreationException exception){
             return ResponseEntity
                     .status(500)
