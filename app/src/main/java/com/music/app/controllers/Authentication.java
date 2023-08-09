@@ -10,10 +10,8 @@ import com.music.app.repos.AdminRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import com.music.app.services.EmailService;
 
 import java.util.Date;
 import java.util.Map;
@@ -22,11 +20,13 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class Authentication {
     private final AdminRepository adminRepository;
+    private final EmailService emailService;
     private final static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Autowired
-    public Authentication(AdminRepository adminRepository) {
+    public Authentication(AdminRepository adminRepository, EmailService emailService) {
         this.adminRepository = adminRepository;
+        this.emailService = emailService;
     }
 
     @PostMapping("/login") public ResponseEntity<?> authenticateAdmin(@RequestBody Admin requestBody) {
@@ -67,5 +67,10 @@ public class Authentication {
         return ResponseEntity
                 .status(201)
                 .body(newAdmin);
+    }
+
+    @GetMapping("/emails")
+    public void sendEmail() {
+        emailService.sendSimpleMessage("", "Test Subject", "Test Content");
     }
 }
