@@ -23,7 +23,7 @@ public class Albums {
         List<Album> albums = albumRepository.findAll();
         return ResponseEntity
                 .status(200)
-                .body(albums);
+                .body(Map.of("albums", albums));
     }
 
     @GetMapping("/{id}")
